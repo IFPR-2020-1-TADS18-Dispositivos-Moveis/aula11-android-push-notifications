@@ -61,10 +61,6 @@ class LoginFragment : Fragment() {
                         if (result.status == "success") {
                             LocalPersistence(requireActivity()).userId = result.data.id
                             findNavController().navigate(R.id.navigateToMessage)
-//                            FirebaseMessaging.getInstance().subscribeToTopic("global_messages")
-//                                .addOnCompleteListener {
-//                                    findNavController().navigate(R.id.navigateToMessage)
-//                                }
                         }
                     }
                 })
