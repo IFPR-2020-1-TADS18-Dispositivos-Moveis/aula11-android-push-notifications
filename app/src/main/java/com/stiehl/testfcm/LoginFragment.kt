@@ -40,8 +40,8 @@ class LoginFragment : Fragment() {
     private fun configureFirebase() {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Toast.makeText(activity, "Firebase error", Toast.LENGTH_SHORT).show()
-                Log.w("GET_MESSAGE", "getInstanceId failed", task.exception)
+                Toast.makeText(activity, getString(R.string.firebase_error), Toast.LENGTH_SHORT).show()
+                Log.w("FIREBASE_ERROR", getString(R.string.firebase_error), task.exception)
                 return@addOnCompleteListener
             }
 
@@ -60,10 +60,11 @@ class LoginFragment : Fragment() {
                         val result = response.body()!!
                         if (result.status == "success") {
                             LocalPersistence(requireActivity()).userId = result.data.id
-                            FirebaseMessaging.getInstance().subscribeToTopic("global_messages")
-                                .addOnCompleteListener {
-                                    findNavController().navigate(R.id.navigateToMessage)
-                                }
+                            findNavController().navigate(R.id.navigateToMessage)
+//                            FirebaseMessaging.getInstance().subscribeToTopic("global_messages")
+//                                .addOnCompleteListener {
+//                                    findNavController().navigate(R.id.navigateToMessage)
+//                                }
                         }
                     }
                 })

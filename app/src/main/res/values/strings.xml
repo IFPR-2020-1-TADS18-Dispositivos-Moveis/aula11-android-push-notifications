@@ -1,5 +1,19 @@
 <resources>
-    <string name="app_name">TestFCM</string>
+    <string name="app_name">Push Notifications</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="messages_channel_name">Messages</string>
+    <string name="messages_channel_description">All the messages from our great app.</string>
+    <string name="messages_channel_id" translatable="false">messages</string>
+    <string name="new_message_from">New message from %1$s</string>
+    <string name="firebase_error">Firebase error</string>
+    <string name="form_name">Name</string>
+    <string name="login">Login</string>
+    <string name="select_and_send">Select the people and send a message</string>
+    <string name="form_title">Title</string>
+    <string name="form_body">Message Body</string>
+    <string name="send">Send</string>
+    <string name="new_message">New Message</string>
+    <string name="message_from">From:</string>
+    <string name="message_title">Title:</string>
+    <string name="message_body">Message</string>
 </resources>
