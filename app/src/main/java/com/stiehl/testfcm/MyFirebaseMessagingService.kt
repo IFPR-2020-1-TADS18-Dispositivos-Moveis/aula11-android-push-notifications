@@ -14,11 +14,14 @@ import com.stiehl.testfcm.model.Message
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
+    override fun onNewToken(token: String?) {
+        super.onNewToken(token)
+    }
+
     private val notificationManager
         get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-
         if (remoteMessage.data.isNotEmpty()) {
             val data = remoteMessage.data
 
@@ -29,44 +32,54 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 data["fromId"]!!
             )
 
-            var title = "New message from ${message.fromName}"
+            var title = getString(R.string.new_message_from, message.fromName)
             var body = message.title
 
             notify(title, body, message)
         }
-
     }
 
     private fun notify(title: String, body: String, message: Message) {
-        createChannel("messages", "Mensagens")
-
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra("message", message)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = createPendingIntent(message)
+        val channelId = createNotificationChannel()
 
         val builder =
-            NotificationCompat.Builder(this, "messages")
+            NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
 
         val notification = builder.build()
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
-    private fun createChannel(
-        id: String, name: String, description: String? = null,
-        importance: Int = NotificationManager.IMPORTANCE_DEFAULT
-    ) {
+    private fun createPendingIntent(message: Message): PendingIntent {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("message", message)
+        }
+        return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+    }
+
+    private fun createNotificationChannel(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(id, name, importance)
-            if (description != null)
-                channel.description = description
+            val name = getString(R.string.messages_channel_name)
+            val descriptionText = getString(R.string.messages_channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(
+                getString(R.string.messages_channel_id), name, importance
+            )
+                .apply {
+                    description = descriptionText
+                }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+        return getString(R.string.messages_channel_id)
     }
 
     companion object {
